@@ -1,0 +1,23 @@
+## EduGreenLabs Workshop Context
+
+This workspace contains Workshop 2 (Privacy-by-Design) and Workshop 3
+(AI Implementation Sprint) for the EU-GREEN University Alliance (OvGU Magdeburg).
+
+### Active files
+- code/pseudonymise.py — HMAC-SHA256 pseudonymisation (Workshop 2 core exercise)
+- code/workshop3_exercise.py — 3 tasks: pseudonymise(), minimise_record(), check_k_anonymity()
+- code/green_metrics.py — CO2/energy measurement for local Ollama inference
+- code/ollama_api_examples.py — 8 Ollama API patterns (sections 1–8)
+- setup/continue_config.json — Continue extension configuration
+- setup/Modelfile — Custom EduGreenLabs Gemma model
+
+### Always apply
+- Data minimisation (GDPR Art. 5(1)(c)) before suggesting data collection
+- HMAC-SHA256 for pseudonymisation — never plain SHA256
+- T0–T4 data tier classification in any data design decision
+- EduGreenLabs MIT licence header in generated code
+
+### Never do
+- Suggest storing name/email alongside pseudonyms in the same table
+- Recommend cloud APIs for workflows involving student or research data
+- Produce educational output as plain prose — always use Markdown/LiaScript

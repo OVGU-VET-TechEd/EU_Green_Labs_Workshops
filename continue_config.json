@@ -1,0 +1,95 @@
+{
+  "$schema": "https://raw.githubusercontent.com/continuedev/continue/main/extensions/vscode/config_schema.json",
+  "models": [
+    {
+      "title": "Gemma (Local — Private)",
+      "provider": "ollama",
+      "model": "gemma:latest",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 4096,
+      "description": "Default Gemma model via local Ollama. No data leaves your machine. Suitable for all code and research tasks."
+    },
+    {
+      "title": "EduGreenLabs Assistant (Local)",
+      "provider": "ollama",
+      "model": "edugreenlab-assistant",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 4096,
+      "description": "Custom EduGreenLabs research assistant with GDPR and privacy expertise baked in. Build with: ollama create edugreenlab-assistant -f setup/Modelfile"
+    },
+    {
+      "title": "Gemma 2B (Low-RAM — Local)",
+      "provider": "ollama",
+      "model": "gemma:2b",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 2048,
+      "description": "Smallest Gemma variant (~1.4 GB). Use on 8 GB RAM machines or when speed matters more than quality."
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "Gemma Autocomplete",
+    "provider": "ollama",
+    "model": "gemma:latest",
+    "apiBase": "http://localhost:11434"
+  },
+  "slashCommands": [
+    {
+      "name": "privacy-check",
+      "description": "Audit code for GDPR/privacy issues",
+      "prompt": "You are a GDPR privacy auditor. Review the following code for:\n1. Direct identifiers (names, emails, IDs) in the data or strings\n2. Quasi-identifiers that could enable re-identification\n3. Special category data (GDPR Art. 9) being processed without explicit safeguards\n4. Missing pseudonymisation where personal data is handled\n5. Data being stored or logged unnecessarily (data minimisation principle)\n6. Secrets or keys hardcoded in the code\n7. Missing error handling that could cause data leaks\n\nFor each issue found, specify: (a) the problem, (b) the relevant GDPR article, (c) a concrete fix.\nIf no issues are found, confirm with a brief explanation of why the code is compliant.\n\nCode to audit:\n```\n{{{ input }}}\n```"
+    },
+    {
+      "name": "oer-review",
+      "description": "Check code/content for OER compatibility",
+      "prompt": "Review the following code or content for Open Educational Resource (OER) compatibility.\n\nCheck all of the following:\n1. Licence: Is it under an open licence (MIT, Apache 2.0, CC BY/SA)? If not stated, flag it.\n2. Dependencies: Does it require proprietary services (cloud APIs, paid tools)? Suggest open alternatives.\n3. Offline capability: Can it run without internet access? If not, how can it be made offline-capable?\n4. Privacy: Does it send data to third parties? Flag anything that might violate GDPR in a research context.\n5. Reproducibility: Are all dependencies pinned/documented? Can another researcher replicate it?\n6. Accessibility: Is there documentation? Are function/variable names descriptive?\n\nFor each concern, provide a specific, actionable recommendation.\n\nContent to review:\n```\n{{{ input }}}\n```"
+    },
+    {
+      "name": "gdpr-check",
+      "description": "Check for GDPR compliance in a data workflow",
+      "prompt": "Analyse the following data workflow or code for GDPR compliance.\n\nSpecifically check:\n1. Legal basis (GDPR Art. 6): Is there a valid legal basis for processing?\n2. Purpose limitation (Art. 5(1)(b)): Is the data used only for its stated purpose?\n3. Data minimisation (Art. 5(1)(c)): Is only necessary data collected?\n4. Storage limitation (Art. 5(1)(e)): Is there a retention/deletion policy?\n5. Integrity & confidentiality (Art. 5(1)(f)): Is the data protected appropriately?\n6. Special categories (Art. 9): Is any health/disability/biometric data processed? Extra safeguards needed.\n7. Data subject rights: Can individuals access, correct, or delete their data?\n\nReference the specific GDPR articles in your response.\n\nWorkflow/code:\n```\n{{{ input }}}\n```"
+    },
+    {
+      "name": "minimise",
+      "description": "Suggest data minimisation improvements",
+      "prompt": "You are a data minimisation expert applying GDPR Art. 5(1)(c) to educational research.\n\nFor the data schema, function, or description below:\n1. Identify every field or variable collected\n2. For each field, ask: is this strictly necessary for the stated research purpose?\n3. Suggest replacements (e.g. exact timestamp → time-of-day band; exact score → band)\n4. Suggest fields to remove entirely\n5. Suggest derived/aggregated alternatives that preserve research value\n6. Classify remaining fields by sensitivity tier (T0=aggregate, T1=pseudonymous, T2=identifiable, T3=sensitive, T4=biometric)\n\nResearch context and data:\n```\n{{{ input }}}\n```"
+    },
+    {
+      "name": "green-estimate",
+      "description": "Estimate the energy cost of this AI/code workflow",
+      "prompt": "Estimate the energy consumption and environmental impact of the following AI workflow or code.\n\nConsider:\n1. If it calls cloud APIs (OpenAI, Anthropic, etc.): note the approximate energy per token (~1 Wh/1000 tokens) and the data sovereignty risk\n2. If it uses local inference (Ollama, llama.cpp): note the hardware requirements and typical energy profile\n3. Suggest lower-energy alternatives where possible (smaller models, quantisation, batching)\n4. Reference the EduGreenLabs Green Metric: target ≥25% CO₂ reduction vs cloud API equivalent\n5. Recommend the appropriate deployment tier: laptop (≤7B model) / DGX Spark (7B–70B) / institutional server (70B+)\n\nWorkflow/code:\n```\n{{{ input }}}\n```"
+    }
+  ],
+  "contextProviders": [
+    {
+      "name": "code",
+      "description": "Reference code from your workspace"
+    },
+    {
+      "name": "docs",
+      "description": "Reference documentation"
+    },
+    {
+      "name": "diff",
+      "description": "Reference current git diff"
+    },
+    {
+      "name": "terminal",
+      "description": "Reference terminal output"
+    },
+    {
+      "name": "problems",
+      "description": "Reference VS Code problems/errors"
+    },
+    {
+      "name": "folder",
+      "description": "Reference all files in a folder"
+    }
+  ],
+  "customCommands": [
+    {
+      "name": "explain-gdpr",
+      "description": "Explain a GDPR article in plain language",
+      "prompt": "Explain GDPR {{{ input }}} in plain, practical language for a researcher at a European university. Include: what it requires, what the consequences of non-compliance are, and give one concrete example in an educational AI context."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+# requirements.txt
+# EduGreenLabs Workshop Series — Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Core HTTP / API ───────────────────────────────────────────────
+requests>=2.31.0          # Ollama REST API calls
+
+# ── OpenAI-compatible SDK (points to local Ollama) ───────────────
+openai>=1.30.0            # Drop-in compatibility with Ollama API
+
+# ── Data handling ─────────────────────────────────────────────────
+pandas>=2.1.0             # Data manipulation for Workshop 2 exercises
+numpy>=1.26.0             # Numerical operations
+
+# ── Database ─────────────────────────────────────────────────────
+psycopg2-binary>=2.9.9    # PostgreSQL adapter (Workshop 2 schema exercises)
+sqlalchemy>=2.0.0         # ORM layer (optional, for schema exercises)
+
+# ── Cryptography (pseudonymisation) ──────────────────────────────
+# Note: hmac and hashlib are in Python stdlib — no install needed
+cryptography>=42.0.0      # Higher-level crypto utilities (Workshop 2)
+
+# ── Green metrics ─────────────────────────────────────────────────
+psutil>=5.9.0             # System resource monitoring
+
+# ── Privacy / anonymisation ───────────────────────────────────────
+# ARX is a Java tool — use the Python bindings or the GUI
+# See: https://arx.deidentifier.org
+
+# ── Jupyter (for interactive exercises) ──────────────────────────
+jupyterlab>=4.1.0
+ipywidgets>=8.1.0
+
+# ── Code quality ──────────────────────────────────────────────────
+black>=24.0.0             # Code formatting
+ruff>=0.3.0               # Fast linter
+mypy>=1.8.0               # Type checking
+
+# ── Testing ───────────────────────────────────────────────────────
+pytest>=8.0.0             # Test framework
+pytest-cov>=5.0.0         # Coverage reporting
+
+# ── Documentation ─────────────────────────────────────────────────
+mkdocs>=1.5.0             # Documentation site (for workshop materials)
+mkdocs-material>=9.5.0   # Material theme for MkDocs

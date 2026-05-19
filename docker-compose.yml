@@ -1,0 +1,181 @@
+# docker-compose.yml
+# ──────────────────────────────────────────────────────────────────
+# EduGreenLabs Workshop 3 — AI Implementation Sprint
+# Production-grade Ollama deployment for institutional servers
+#
+# Prerequisites:
+#   - Docker Engine 24+
+#   - Docker Compose v2
+#   - NVIDIA Container Toolkit (for GPU support):
+#       https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+#   - TLS certificate and key in ./certs/ (for HTTPS)
+#
+# Usage:
+#   # Start all services
+#   docker compose up -d
+#
+#   # Pull models after startup
+#   docker compose exec ollama ollama pull gemma:latest
+#   docker compose exec ollama ollama pull gemma2:27b
+#   docker compose exec ollama ollama pull nomic-embed-text
+#
+#   # Check status
+#   docker compose ps
+#   docker compose logs ollama
+#
+#   # Stop
+#   docker compose down
+#
+#   # Full cleanup (removes volumes — deletes downloaded models!)
+#   docker compose down -v
+#
+# Security note:
+#   The NGINX proxy restricts access to institutional IP ranges.
+#   Update the allow/deny rules in nginx.conf before deploying.
+#
+# Licence: MIT · EduGreenLabs / OvGU Magdeburg · EU-GREEN Alliance
+# ──────────────────────────────────────────────────────────────────
+
+name: edugreenlab-ai
+
+services:
+
+  # ── Ollama Model Server ─────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-research
+    restart: unless-stopped
+
+    # Expose on localhost only — NGINX handles external access
+    ports:
+      - "127.0.0.1:11434:11434"
+
+    volumes:
+      # Persistent model storage — survives container restarts/upgrades
+      - ollama_models:/root/.ollama
+
+    environment:
+      # Listen on all interfaces inside the container
+      - OLLAMA_HOST=0.0.0.0:11434
+
+      # Serve up to 8 concurrent requests (tune based on GPU VRAM)
+      - OLLAMA_NUM_PARALLEL=8
+
+      # Keep up to 4 models loaded in VRAM simultaneously
+      - OLLAMA_MAX_LOADED_MODELS=4
+
+      # Flash Attention reduces VRAM usage for long contexts
+      - OLLAMA_FLASH_ATTENTION=1
+
+      # Request timeout in seconds
+      - OLLAMA_KEEP_ALIVE=5m
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            # Remove this section if no NVIDIA GPU is available
+            # (Ollama will fall back to CPU inference)
+            - driver: nvidia
+              count: all         # Use all available GPUs
+              capabilities: [gpu]
+
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:11434/api/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  # ── NGINX Reverse Proxy with TLS ────────────────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ollama-proxy
+    restart: unless-stopped
+
+    ports:
+      - "443:443"
+      - "80:80"   # Redirect HTTP → HTTPS
+
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro          # Your institutional TLS certs
+      # To generate self-signed certs for testing:
+      # openssl req -x509 -nodes -days 365 -newkey rsa:2048
+      #   -keyout certs/key.pem -out certs/cert.pem
+      #   -subj "/CN=ai-research.your-uni.de"
+
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # ── Model Initialiser (runs once on first start) ─────────────────
+  # Pulls essential models after Ollama is healthy.
+  # Remove services you don't need to save disk space.
+  model-init:
+    image: ollama/ollama:latest
+    container_name: ollama-model-init
+    restart: "no"                    # Run once only
+
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "=== EduGreenLabs Model Initialiser ==="
+        echo "Pulling core models..."
+        
+        # Always pull — updates if a newer version exists
+        ollama pull gemma:latest       && echo "✅ gemma:latest ready"
+        ollama pull nomic-embed-text   && echo "✅ nomic-embed-text ready"
+        
+        # Uncomment for larger hardware (DGX Spark / institutional server):
+        # ollama pull gemma2:27b       && echo "✅ gemma2:27b ready"
+        # ollama pull llama3.3:70b     && echo "✅ llama3.3:70b ready"
+        
+        echo "=== Model initialisation complete ==="
+        ollama list
+
+# ──────────────────────────────────────────────────────────────────
+# Volumes
+# ──────────────────────────────────────────────────────────────────
+volumes:
+  ollama_models:
+    driver: local
+    driver_opts:
+      type: none
+      # ⚠️  Change this to a fast NVMe path on your server
+      # Models are large (5–40 GB each) — use dedicated storage
+      device: /data/ollama-models
+      o: bind
+
+# ──────────────────────────────────────────────────────────────────
+# Networks
+# ──────────────────────────────────────────────────────────────────
+networks:
+  default:
+    name: edugreenlab-net
+    driver: bridge

@@ -249,66 +249,29 @@ The tool below is the centrepiece. Pick a **theme** along the top, then move the
 > 🖱️ **How to use it:** click a theme button, drag the slider, and read across the three
 > columns. The bottom panel summarises what the three levels share.
 
-<script style="display:block; width:100%; font-family:inherit;">
-"HTML"
-</script>
+<div id="crosswalk-app" style="font-family:system-ui,-apple-system,sans-serif;">
 
-``` html
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-  * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, sans-serif; margin:0; padding:0; background:#fff; color:#1f2933; }
-  .wrap { max-width: 980px; margin: 0 auto; }
-  h4 { margin: 4px 0 10px; }
-  .themes { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
-  .themes button {
-    border:2px solid #d9dee5; background:#fff; color:#334; border-radius:8px;
-    padding:8px 13px; cursor:pointer; font-size:13px; font-weight:600; transition:all .15s;
-  }
-  .themes button:hover { border-color:#9bb3cf; }
-  .slider-box { background:#f0f4ff; border:1px solid #c8d5f5; border-radius:10px; padding:14px 18px; margin-bottom:18px; }
-  .slider-box label { font-size:13px; color:#445; display:block; margin-bottom:8px; }
-  .slider-box .stagename { font-size:20px; font-weight:800; }
-  input[type=range]{ width:100%; accent-color:#2a7ed3; margin-top:6px; }
-  .stage-ticks { display:flex; justify-content:space-between; font-size:11px; color:#778; margin-top:4px; }
-  .cols { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; }
-  @media (max-width:760px){ .cols { grid-template-columns:1fr; } }
-  .col { border-radius:10px; padding:14px; border-top:5px solid; background:#fafbfc; }
-  .col .flag { font-size:22px; }
-  .col .lvl  { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; opacity:.7; }
-  .col .doc  { font-size:12px; color:#667; margin-bottom:8px; }
-  .col .stage{ display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; color:#fff; margin-bottom:8px; }
-  .col p { font-size:13px; line-height:1.55; margin:6px 0; }
-  .col .tag { font-size:11px; color:#556; background:#eef1f5; border-radius:6px; padding:2px 7px; display:inline-block; margin:2px 3px 0 0; }
-  .synthesis { margin-top:18px; background:#f1faf4; border:1px solid #b8e3c8; border-left:5px solid #2e9e5b; border-radius:0 10px 10px 0; padding:14px 18px; }
-  .synthesis h5 { margin:0 0 6px; color:#1e7a44; font-size:14px; }
-  .synthesis p { font-size:13px; line-height:1.6; margin:0; color:#244; }
-</style>
-</head>
-<body>
-<div class="wrap">
+  <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:8px;">Choose a competency theme:</div>
+  <div id="cw-themes" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;"></div>
 
-  <div class="themes" id="themes"></div>
-
-  <div class="slider-box">
-    <label>Progression level — drag to compare beginner → advanced</label>
-    <div class="stagename" id="stagename">–</div>
-    <input type="range" id="stage" min="0" max="2" step="1" value="0">
-    <div class="stage-ticks"><span>Beginner</span><span>Intermediate</span><span>Advanced</span></div>
+  <div style="background:#f0f4ff;border:1px solid #c8d5f5;border-radius:10px;padding:14px 18px;margin-bottom:18px;">
+    <div style="font-size:13px;color:#445;margin-bottom:8px;">Progression level — drag to compare beginner → advanced</div>
+    <div id="cw-stagename" style="font-size:20px;font-weight:800;">–</div>
+    <input type="range" id="cw-stage" min="0" max="2" step="1" value="0" style="width:100%;accent-color:#2a7ed3;margin-top:6px;">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#778;margin-top:4px;">
+      <span>Beginner</span><span>Intermediate</span><span>Advanced</span>
+    </div>
   </div>
 
-  <div class="cols">
-    <div class="col" id="col-de" style="border-top-color:#000;"></div>
-    <div class="col" id="col-eu" style="border-top-color:#003399;"></div>
-    <div class="col" id="col-un" style="border-top-color:#0077c8;"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+    <div id="cw-col-de" style="border-radius:10px;padding:14px;border-top:5px solid #1a1a2e;background:#fafbfc;"></div>
+    <div id="cw-col-eu" style="border-radius:10px;padding:14px;border-top:5px solid #003399;background:#fafbfc;"></div>
+    <div id="cw-col-un" style="border-radius:10px;padding:14px;border-top:5px solid #0077c8;background:#fafbfc;"></div>
   </div>
 
-  <div class="synthesis">
-    <h5>🔗 What the three levels share</h5>
-    <p id="synth">–</p>
+  <div style="margin-top:18px;background:#f1faf4;border:1px solid #b8e3c8;border-left:5px solid #2e9e5b;border-radius:0 10px 10px 0;padding:14px 18px;">
+    <div style="font-size:13px;font-weight:700;color:#1e7a44;margin-bottom:6px;">🔗 What the three levels share</div>
+    <p id="cw-synth" style="font-size:13px;line-height:1.6;margin:0;color:#244;">–</p>
   </div>
 
 </div>
@@ -433,7 +396,7 @@ The tool below is the centrepiece. Pick a **theme** along the top, then move the
   }
 
   function renderCol(which){
-    var el = document.getElementById('col-'+which);
+    var el = document.getElementById('cw-col-'+which);
     var d = current[which][stageIdx];
     var html = '';
     html += '<div class="flag">'+flag(which)+'</div>';
@@ -446,13 +409,13 @@ The tool below is the centrepiece. Pick a **theme** along the top, then move the
   }
 
   function update(){
-    document.getElementById('stagename').textContent = STAGENAMES[stageIdx];
+    document.getElementById('cw-stagename').textContent = STAGENAMES[stageIdx];
     renderCol('de'); renderCol('eu'); renderCol('un');
-    document.getElementById('synth').textContent = current.synth;
+    document.getElementById('cw-synth').textContent = current.synth;
   }
 
   // Build theme buttons
-  var tb = document.getElementById('themes');
+  var tb = document.getElementById('cw-themes');
   THEMES.forEach(function(t){
     var b = document.createElement('button');
     b.textContent = t.label;
@@ -468,7 +431,7 @@ The tool below is the centrepiece. Pick a **theme** along the top, then move the
   tb.children[0].style.borderColor='#2a7ed3';
   tb.children[0].style.color='#fff';
 
-  document.getElementById('stage').addEventListener('input', function(e){
+  document.getElementById('cw-stage').addEventListener('input', function(e){
     stageIdx = parseInt(e.target.value,10);
     update();
   });
@@ -476,7 +439,6 @@ The tool below is the centrepiece. Pick a **theme** along the top, then move the
   update();
 })();
 </script>
-```
 
 --{{0}}--
 Take your time with this. Pick the theme that matters most to your own subject, then walk

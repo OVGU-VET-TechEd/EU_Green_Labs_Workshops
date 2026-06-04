@@ -21,8 +21,6 @@ logo:     https://raw.githubusercontent.com/LiaScript/docs/master/README/img/log
 .box.priv { border-left-color:#7c3aed; background:#f7f4fd; }
 @end
 
-import: https://raw.githubusercontent.com/liaTemplates/AVOREN/master/README.md
-
 -->
 
 # Local AI in Higher Education Teaching

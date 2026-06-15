@@ -65,7 +65,7 @@ _(Apply the data minimisation principle: could the question be answered with exi
 | T4 | Biometric | Eye tracking, keystroke dynamics |
 
 ---
-!?[](https://)
+
 ## 4. Legal Basis
 
 **4.1 Primary legal basis under GDPR Art. 6:**

@@ -1,0 +1,34 @@
+[
+  {
+    "label": "Short factual",
+    "prompt": "What is data minimisation? One sentence.",
+    "max_tokens": 60,
+    "country": "DE",
+    "hardware_tdp_watts": 65,
+    "assumed_load_pct": 0.5
+  },
+  {
+    "label": "Medium explanation",
+    "prompt": "Explain the difference between pseudonymisation and anonymisation under GDPR in 3 bullet points.",
+    "max_tokens": 200,
+    "country": "DE",
+    "hardware_tdp_watts": 65,
+    "assumed_load_pct": 0.5
+  },
+  {
+    "label": "Research advice",
+    "prompt": "I am running a 3-month study on AI-assisted writing in PhD programmes across 3 EU universities. What are the top 5 GDPR considerations I must address?",
+    "max_tokens": 400,
+    "country": "DE",
+    "hardware_tdp_watts": 65,
+    "assumed_load_pct": 0.5
+  },
+  {
+    "label": "Code generation",
+    "prompt": "Write a Python function that bins an exact datetime into time-of-day categories (morning/afternoon/evening/night). Include type hints and a docstring.",
+    "max_tokens": 300,
+    "country": "DE",
+    "hardware_tdp_watts": 65,
+    "assumed_load_pct": 0.5
+  }
+]

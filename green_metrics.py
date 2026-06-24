@@ -340,6 +340,58 @@ def run_benchmark(
     return results
 
 
+def run_from_json(filepath: str, model: str = DEFAULT_MODEL) -> list[InferenceMetrics]:
+    """Load a JSON array of prompt entries and measure each one.
+
+    Expected entry fields (per item):
+      - prompt (str)               required
+      - max_tokens (int)           optional
+      - country (str)              optional
+      - hardware_tdp_watts (float) optional
+      - assumed_load_pct (float)   optional
+      - system (str)               optional
+      - model (str)                optional (overrides CLI model)
+    """
+    if not os.path.exists(filepath):
+        print(f"❌ Input file not found: {filepath}")
+        return []
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"❌ Failed to parse JSON: {e}")
+            return []
+
+    results: list[InferenceMetrics] = []
+    for i, entry in enumerate(data, 1):
+        prompt = entry.get("prompt")
+        if not prompt:
+            print(f"Skipping entry #{i}: missing 'prompt'")
+            continue
+
+        entry_model = entry.get("model", model)
+        max_tokens = entry.get("max_tokens", 512)
+        country = entry.get("country", "EU")
+        tdp = float(entry.get("hardware_tdp_watts", 65.0))
+        load = float(entry.get("assumed_load_pct", 0.5))
+        system = entry.get("system", "")
+
+        print(f"\nRunning [{i}/{len(data)}] {entry.get('label','(no label)')}...")
+        m = measure(
+            prompt=prompt,
+            model=entry_model,
+            system=system,
+            country=country,
+            hardware_tdp_watts=tdp,
+            assumed_load_pct=load,
+            max_tokens=max_tokens,
+        )
+        results.append(m)
+
+    return results
+
+
 # ──────────────────────────────────────────────────────────────────
 # CLI
 # ──────────────────────────────────────────────────────────────────
@@ -355,6 +407,8 @@ def main() -> None:
                         help="Hardware TDP in watts (default: 65W laptop)")
     parser.add_argument("--load", type=float, default=0.5,
                         help="Assumed load fraction 0.0–1.0 (default: 0.5)")
+    parser.add_argument("--input", type=str,
+                        help="Path to JSON file with an array of prompt entries to run")
     parser.add_argument("--benchmark", action="store_true", help="Run full benchmark suite")
     parser.add_argument("--export", type=str, metavar="FILE.csv",
                         help="Export results to CSV for EduGreenLabs shared log")
@@ -377,7 +431,10 @@ def main() -> None:
 
     results = []
 
-    if args.benchmark:
+    if args.input:
+        results = run_from_json(args.input, model=args.model)
+
+    elif args.benchmark:
         results = run_benchmark(
             model=args.model,
             country=args.country,

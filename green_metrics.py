@@ -396,6 +396,59 @@ def run_from_json(filepath: str, model: str = DEFAULT_MODEL) -> list[InferenceMe
 # CLI
 # ──────────────────────────────────────────────────────────────────
 
+def generate_demo_output(filepath: str = "demo_green_metrics.csv") -> None:
+    """Generate sample benchmark results and export to CSV for demonstration."""
+    print(f"\n📊 Generating demo output file: {filepath}")
+    
+    demo_results = [
+        InferenceMetrics(
+            timestamp="2026-06-25T10:15:32.123456",
+            model="gemma:latest",
+            prompt_preview="What is data minimisation? One...",
+            prompt_tokens=12,
+            gen_tokens=28,
+            total_tokens=40,
+            elapsed_sec=2.34,
+            tokens_per_sec=11.9,
+            hardware_tdp_w=65.0,
+            assumed_load_pct=0.5,
+            energy_wh=0.042163,
+            energy_kwh=0.00004216,
+            country="DE",
+            grid_intensity=400,
+            co2_local_g=0.016865,
+            co2_cloud_g=0.040,
+            co2_saved_g=0.023135,
+            co2_saved_pct=57.8,
+            response_preview="Data minimisation is the practice...",
+        ),
+        InferenceMetrics(
+            timestamp="2026-06-25T10:18:15.456789",
+            model="gemma:latest",
+            prompt_preview="Explain pseudonymisation vs anonymi...",
+            prompt_tokens=16,
+            gen_tokens=95,
+            total_tokens=111,
+            elapsed_sec=7.82,
+            tokens_per_sec=12.1,
+            hardware_tdp_w=65.0,
+            assumed_load_pct=0.5,
+            energy_wh=0.141729,
+            energy_kwh=0.00014173,
+            country="DE",
+            grid_intensity=400,
+            co2_local_g=0.056692,
+            co2_cloud_g=0.111,
+            co2_saved_g=0.054308,
+            co2_saved_pct=48.9,
+            response_preview="Pseudonymisation involves replace...",
+        ),
+    ]
+    
+    export_to_csv(demo_results, filepath)
+    print(f"✅ Demo output successfully created: {filepath}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="EduGreenLabs Green Metrics — measure CO₂ footprint of local AI inference"
@@ -410,6 +463,7 @@ def main() -> None:
     parser.add_argument("--input", type=str,
                         help="Path to JSON file with an array of prompt entries to run")
     parser.add_argument("--benchmark", action="store_true", help="Run full benchmark suite")
+    parser.add_argument("--demo", action="store_true", help="Generate demo output CSV file (no Ollama required)")
     parser.add_argument("--export", type=str, metavar="FILE.csv",
                         help="Export results to CSV for EduGreenLabs shared log")
     parser.add_argument("--list-countries", action="store_true",
@@ -420,6 +474,10 @@ def main() -> None:
         print("\nAvailable country codes and grid carbon intensity (gCO₂/kWh):\n")
         for code, intensity in sorted(CARBON_INTENSITY.items()):
             print(f"  {code:<10} {intensity:>4} gCO₂/kWh")
+        return
+
+    if args.demo:
+        generate_demo_output()
         return
 
     # Check Ollama

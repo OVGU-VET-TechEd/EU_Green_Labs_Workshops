@@ -1261,3 +1261,6 @@ The deployment architectures you practiced today will underpin the **WP3 Gamific
 _This workshop was produced as an Open Educational Resource under CC BY-SA 4.0 by the EduGreenLabs consortium (EU-GREEN Alliance, OvGU Magdeburg). Funded by the European Union. All code examples are released under MIT Licence._
 
 > **🌿 Green metric:** All AI inference during this workshop was performed locally using Ollama. Estimated CO₂ savings vs. equivalent cloud API usage: **~85%** per participant.
+
+> **Material:**
+[Videos of Zoom Presentations](/https://cloud.ovgu.de/s/HQBDJ2BAY6AtYtW)
